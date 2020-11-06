@@ -1,0 +1,72 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>해외축구 일정</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <style>
+        * {
+            font-size: 16px;
+            font-family: Consolas, sans-serif;
+        }
+    </style>
+</head>
+<body>
+<!--<div>-->
+<!--    <h3 th:text="${scheduleDto.matchStatus}"></h3>-->
+<!--    <hr/>-->
+<!--    <div style="display: inline">-->
+<!--        <h5 th:text="${scheduleDto.homeName}" style="display: inline"></h5>-->
+<!--        <img th:src="${scheduleDto.homeImg}" style="display: inline">-->
+<!--        <h5 th:text="${scheduleDto.homeScore}" style="display: inline"></h5>-->
+<!--    </div>-->
+<!--    :-->
+<!--    <div style="display: inline">-->
+<!--        <h5 th:text="${scheduleDto.awayScore}" style="display: inline"></h5>-->
+<!--        <img th:src="${scheduleDto.awayImg}" style="display: inline">-->
+<!--        <h5 th:text="${scheduleDto.awayName}" style="display: inline"></h5>-->
+<!--    </div>-->
+<!--</div>-->
+<div>
+    <form>
+        <p><input type="date" id="date"></p>
+    </form>
+</div>
+<div id="soccer_schedule">
+
+</div>
+<br/>
+<script
+        src="https://code.jquery.com/jquery-3.5.1.js"
+        integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+        crossorigin="anonymous"></script>
+<script>
+    $("#date").on("change", function () {
+        var date = $("#date").val();
+        console.log(date);
+
+        $.ajax({
+            url: "/soccer/schedule",
+            type: "post",
+            dataType: "json",
+            contentType:"application/json; charset=utf-8",
+            data: JSON.stringify(date),
+            success: function (result) {
+                console.log(result);
+                if (result.length == 0) {
+                    $("#soccer_schedule").html("<hr/><h3>해당 날짜에는 경기가 없습니다.</h3>")
+                } else {
+                    var html = "";
+                    for (var i = 0; i < result.length; i++) {
+                        html += "<h3>" + result[i].matchStatus + "</h3><hr/>";
+                        html += "<div style='display: inline'><h5 style='display: inline'>" + result[i].homeName + "&nbsp</h5><img src='" + result[i].homeImg + "' style='display: inline; vertical-align: middle'>&nbsp&nbsp<h5 style='display: inline'>" + result[i].homeScore + "</h5></div>&nbsp&nbsp : &nbsp&nbsp";
+                        html += "<div style='display: inline'><h5 style='display: inline'>" + result[i].awayScore + "&nbsp&nbsp</h5><img src='" + result[i].awayImg + "' style='display: inline; vertical-align: middle'>&nbsp</h5><h5 style='display: inline'>" + result[i].awayName + "</h5></div><br/><br/><br/>";
+                    }
+
+                    $("#soccer_schedule").html(html);
+                }
+            }
+        })
+    })
+</script>
+</body>
+</html>
